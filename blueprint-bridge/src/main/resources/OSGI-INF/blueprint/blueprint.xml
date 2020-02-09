@@ -18,16 +18,15 @@ permissions and limitations under the License.
     xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
     xmlns:cxf="http://camel.apache.org/schema/blueprint/cxf"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
-    
     <!-- ******************** Camel route definition ********************* -->
-    <camelContext allowUseOriginalMessage="false" id="camelContext-Bridge-Local" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/blueprint">
+    <camelContext allowUseOriginalMessage="false"
+        id="camelContext-Bridge-Local" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/blueprint">
         <route id="amq-to-amq">
             <from id="from" uri="amqLoc:queue:IN"/>
             <transacted id="trans"/>
             <to id="to" uri="amqRem:queue:OUT"/>
         </route>
     </camelContext>
-    
     <!-- ********************* Local AMQ configuration ************************** -->
     <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="amqLoc">
         <property name="configuration">
@@ -40,19 +39,16 @@ permissions and limitations under the License.
             </bean>
         </property>
     </bean>
-    
     <bean class="org.apache.activemq.jms.pool.PooledConnectionFactory" id="AmqCFLocalPool">
         <property name="maxConnections" value="1"/>
         <property name="idleTimeout" value="0"/>
         <property name="connectionFactory" ref="AmqCFLocal"/>
     </bean>
-
     <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="AmqCFLocal">
         <property name="brokerURL" value="tcp://10.0.0.170:61616?jms.prefetchPolicy.all=0"/>
         <property name="userName" value="admin"/>
         <property name="password" value="admin"/>
     </bean>
-
     <!-- ********************* Remote AMQ configuration ************************** -->
     <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="amqRem">
         <property name="configuration">
@@ -62,13 +58,12 @@ permissions and limitations under the License.
             </bean>
         </property>
     </bean>
-
-    <bean class="org.apache.activemq.jms.pool.PooledConnectionFactory" destroy-method="stop" id="AmqCFRemotePool" init-method="start">
+    <bean class="org.apache.activemq.jms.pool.PooledConnectionFactory"
+        destroy-method="stop" id="AmqCFRemotePool" init-method="start">
         <property name="maxConnections" value="1"/>
         <property name="idleTimeout" value="0"/>
         <property name="connectionFactory" ref="AmqCFRemote"/>
     </bean>
-
     <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="AmqCFRemote">
         <property name="brokerURL" value="tcp://10.0.0.171:61616"/>
         <property name="userName" value="admin"/>
