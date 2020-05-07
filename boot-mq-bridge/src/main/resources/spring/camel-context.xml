@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <!--        -->
+    <!-- Source -->
+    <!--        -->
+    <bean class="com.ibm.mq.jms.MQConnectionFactory" id="source.mqConnectionFactory">
+        <property name="connectionNameList" value="10.0.0.207(1414)"/>
+        <property name="queueManager" value="REDHAT.QUEUE.MANAGER"/>
+        <property name="channel" value="SYSTEM.DEF.SVRCONN"/>
+        <property name="transportType" value="1"/>
+        <property name="clientReconnectOptions" value="67108864"/>
+    </bean>
+    <bean
+        class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter" id="source.mqUserCred">
+        <property name="targetConnectionFactory" ref="source.mqConnectionFactory"/>
+        <property name="username" value="redhat"/>
+    </bean>
+    <bean class="org.apache.activemq.jms.pool.PooledConnectionFactory"
+        id="source.pooledConnectionFactory" primary="true">
+        <property name="maxConnections" value="${jmsSourceConnections}"/>
+        <property name="idleTimeout" value="${idleTimeout}"/>
+        <property name="connectionFactory" ref="source.mqUserCred"/>
+    </bean>
+    <bean class="org.apache.camel.component.jms.JmsComponent" id="source">
+        <property name="configuration">
+            <bean class="org.apache.camel.component.jms.JmsConfiguration">
+                <property name="connectionFactory" ref="source.pooledConnectionFactory"/>
+                <property name="transacted" value="${transacted}"/>
+                <property name="receiveTimeout" value="${receiveTimeout}"/>
+                <property name="maxConcurrentConsumers" value="${jmsSourceMaxConsumers}"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--             -->
+    <!-- Destination -->
+    <!--             -->
+    <bean class="com.ibm.mq.jms.MQConnectionFactory" id="dest.mqConnectionFactory">
+        <property name="connectionNameList" value="10.0.0.150(1414)"/>
+        <property name="queueManager" value="REDHAT.QUEUE.MANAGER"/>
+        <property name="channel" value="SYSTEM.DEF.SVRCONN"/>
+        <property name="transportType" value="1"/>
+        <property name="clientReconnectOptions" value="67108864"/>
+    </bean>
+    <bean
+        class="org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter" id="dest.mqUserCred">
+        <property name="targetConnectionFactory" ref="dest.mqConnectionFactory"/>
+        <property name="username" value="redhat"/>
+    </bean>
+    <bean class="org.apache.activemq.jms.pool.PooledConnectionFactory"
+        destroy-method="stop" id="dest.pooledConnectionFactory" init-method="start">
+        <property name="maxConnections" value="${jmsDestConnections}"/>
+        <property name="idleTimeout" value="${idleTimeout}"/>
+        <property name="connectionFactory" ref="dest.mqUserCred"/>
+    </bean>
+    <bean class="org.apache.camel.component.jms.JmsComponent" id="dest">
+        <property name="configuration">
+            <bean class="org.apache.camel.component.jms.JmsConfiguration">
+                <property name="connectionFactory" ref="dest.pooledConnectionFactory"/>
+                <property name="transacted" value="${transacted}"/>
+            </bean>
+        </property>
+    </bean>
+    <!--             -->
+    <!-- Camel Route -->
+    <!--             -->
+    <camelContext allowUseOriginalMessage="false" id="mq-Bridge-LocalTX"
+        streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/spring">
+        <route id="mq-to-mq">
+            <from id="_from1" uri="source:queue:REDHAT.QUEUE"/>
+            <transacted id="_transacted1"/>
+            <to id="_to1" uri="dest:queue:REDHAT.QUEUE"/>
+        </route>
+    </camelContext>
+</beans>
