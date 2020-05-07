@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd                         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <!--        -->
+    <!-- Source -->
+    <!--        -->
+    <!--
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="source.activemqConnectionFactory">
+        <property name="brokerURL" value="${jmsSource}"/>
+        <property name="userName" value="${jmsSourceUser}"/>
+        <property name="password" value="${jmsSourcePassword}"/>
+    </bean>
+    <bean class="org.apache.activemq.pool.PooledConnectionFactory" id="source.pooledConnectionFactory" primary="true">
+        <property name="maxConnections" value="${jmsSourceConnections}"/>
+        <property name="idleTimeout" value="${idleTimeout}"/>
+        <property name="connectionFactory" ref="source.activemqConnectionFactory"/>
+    </bean>
+-->
+    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="source">
+        <property name="configuration">
+            <bean class="org.apache.activemq.camel.component.ActiveMQConfiguration">
+                <!--            
+                <property name="connectionFactory" ref="source.pooledConnectionFactory"/>
+-->
+                <property name="transacted" value="${transacted}"/>
+                <property name="receiveTimeout" value="${receiveTimeout}"/>
+                <property name="maxConcurrentConsumers" value="${jmsSourceMaxConsumers}"/>
+                <property name="brokerURL" value="${jmsSource}"/>
+                <property name="userName" value="${jmsSourceUser}"/>
+                <property name="password" value="${jmsSourcePassword}"/>
+            </bean>
+        </property>
+    </bean>
+    <!--             -->
+    <!-- Destination -->
+    <!--             -->
+    <!--
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="dest.activemqConnectionFactory">
+        <property name="brokerURL" value="${jmsDest}"/>
+        <property name="userName" value="${jmsDestUser}"/>
+        <property name="password" value="${jmsDestPassword}"/>
+    </bean>
+
+    <bean class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop" id="dest.pooledConnectionFactory" init-method="start">
+        <property name="maxConnections" value="${jmsDestConnections}"/>
+        <property name="idleTimeout" value="${idleTimeout}"/>
+        <property name="connectionFactory" ref="dest.activemqConnectionFactory"/>
+    </bean>
+-->
+    <bean class="org.apache.activemq.camel.component.ActiveMQComponent" id="dest">
+        <property name="configuration">
+            <bean class="org.apache.activemq.camel.component.ActiveMQConfiguration">
+                <!--
+                <property name="connectionFactory" ref="dest.pooledConnectionFactory"/>
+-->
+                <property name="transacted" value="${transacted}"/>
+                <property name="brokerURL" value="${jmsDest}"/>
+                <property name="userName" value="${jmsDestUser}"/>
+                <property name="password" value="${jmsDestPassword}"/>
+            </bean>
+        </property>
+    </bean>
+    <!--             -->
+    <!-- Camel Route -->
+    <!--             -->
+    <!-- ******************** Camel route definition ********************* -->
+    <camelContext allowUseOriginalMessage="false"
+        id="camelContext-Bridge-Local" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/spring">
+        <threadPoolProfile id="jmsProfile" maxPoolSize="10" maxQueueSize="10" poolSize="10"/>
+        <route id="amq-to-amq">
+            <from id="_from1" uri="source:queue:TestQueue"/>
+            <transacted id="_transacted1"/>
+            <to id="_to1" uri="dest:queue:TestQueue"/>
+        </route>
+    </camelContext>
+</beans>

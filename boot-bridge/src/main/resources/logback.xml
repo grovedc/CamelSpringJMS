@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d [%15.15t] %highlight(%-5p) %-30.30C - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>  
+    
+    <logger name="org.apache.camel" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>    
+
+    <logger name="org.springframework.jms.connection.JmsTransactionManager" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="org.apache.activemq.TransactionContext" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="com.arjuna" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+</configuration>
