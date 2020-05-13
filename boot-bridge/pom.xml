@@ -20,7 +20,7 @@
 			<dependency>
 				<groupId>org.jboss.redhat-fuse</groupId>
 				<artifactId>fuse-springboot-bom</artifactId>
-				<version>7.4.0.fuse-740036-redhat-00002</version>
+				<version>7.6.0.fuse-760027-redhat-00001</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
