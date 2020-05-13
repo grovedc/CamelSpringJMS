@@ -27,4 +27,8 @@
     <logger name="com.arjuna" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
+
+    <logger name="bitronix" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
 </configuration>
