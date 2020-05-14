@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d [%-15.15t] %-5p %-10.10c{1} - %-10.10X{camel.exchangeId} - %-20.20X{camel.routeId} - %m%n</pattern>
+        </encoder>
+    </appender>
+    
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="org.apache.camel" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>    
+    
+    <logger name="org.springframework.jms.connection.JmsTransactionManager" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="org.springframework.transaction" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="com.arjuna" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+</configuration>

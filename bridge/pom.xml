@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.redhat.gss</groupId>
+	<artifactId>bridge</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<name>Spring-Boot :: Camel MQ / MQ</name>
+	<description>Spring Boot example running a Camel route connecting to IBM MQ</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+	    <!-- configure the Fuse version you want to use here -->
+    	<fuse.version>7.5.0.fuse-750029-redhat-00002</fuse.version>
+<!--    	<fuse.version>7.4.0.fuse-740036-redhat-00002</fuse.version> -->
+
+		<!-- Maven plugin versions -->
+		<fabric8.maven.plugin.version>3.5.33.fuse-000089-redhat-4</fabric8.maven.plugin.version>
+		<spring-boot.version>1.5.4.RELEASE</spring-boot.version>
+		<maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+		<applicationinsights-spring-boot-starter.version>1.1.2</applicationinsights-spring-boot-starter.version>
+		<applicationinsights-logging-logback.version>2.3.1</applicationinsights-logging-logback.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.redhat-fuse</groupId>
+				<artifactId>fuse-springboot-bom</artifactId>
+				<version>${fuse.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<repositories>
+		<repository>
+			<id>red-hat-ga-repository</id>
+			<url>https://maven.repository.redhat.com/ga</url>
+		</repository>
+		<repository>
+			<id>red-hat-early-access-repository</id>
+			<url>https://maven.repository.redhat.com/earlyaccess/all</url>
+		</repository>
+		<repository>
+			<id>jboss-early-access-repository</id>
+			<url>https://repository.jboss.org/nexus/content/groups/ea</url>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>red-hat-ga-repository</id>
+			<url>https://maven.repository.redhat.com/ga</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>red-hat-early-access-repository</id>
+			<url>https://maven.repository.redhat.com/earlyaccess/all</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>jboss-early-access-repository</id>
+			<url>https://repository.jboss.org/nexus/content/groups/ea</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.fusesource</groupId>
+			<artifactId>camel-activemq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-bean-validator</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jta-narayana</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.mq</groupId>
+            <artifactId>allclient</artifactId>
+            <version>9.1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.messaginghub</groupId>
+            <artifactId>pooled-jms</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+<!--
+      	<dependency>
+        	<groupId>org.apache.geronimo.specs</groupId>
+        	<artifactId>geronimo-jms_2.0_spec</artifactId>
+      	</dependency>
+      	        -->
+	</dependencies>
+
+	<build>
+		<defaultGoal>spring-boot:run</defaultGoal>
+
+		<plugins>
+			<!-- Compiler plugin enforces Java 1.8 compatibility -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>**/*KT.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
